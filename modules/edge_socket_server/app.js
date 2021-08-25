@@ -4,8 +4,12 @@ var Transport = require('azure-iot-device-mqtt').Mqtt;
 var Client = require('azure-iot-device').ModuleClient;
 var Message = require('azure-iot-device').Message;
 let app = require('express')();
-let http = require('http').Server(app);
-let io = require('socket.io')(http);
+const http = require('http');
+const socket = require('socket.io');
+const server = http.createServer();
+const port = 11002;
+const prefix = "V2: ";
+const nspPrefix = "/nsp," + prefix;
 
 let counter = 0;
 

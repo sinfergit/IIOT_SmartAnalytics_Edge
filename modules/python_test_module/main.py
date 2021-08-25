@@ -30,8 +30,6 @@ async def main():
                 print("................................................................................................................ ")
                 print("the data in the message received on input1 at - ",datetime.datetime.now())
                 print(decodedMessage)
-                # print("custom properties are")
-                # print(input_message.custom_properties)
                 print("forwarding mesage to output1 at - ",datetime.datetime.now())
                 print("................................................................................................................ ")
                 await module_client.send_message_to_output(decodedMessage, "output1")
