@@ -151,6 +151,29 @@
               "image": "${MODULES.python_test_module}",
               "createOptions": {}
             }
+          },
+          "edge_iiot_analyzer_web": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.edge_iiot_analyzer_web}",
+              "createOptions": {
+                "ExposedPorts": {
+                  "8080/tcp": {}
+                },
+                "HostConfig": {
+                  "PortBindings": {
+                    "80/tcp": [
+                      {
+                        "HostPort": "80"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
           }
         }
       }
