@@ -73,7 +73,7 @@
             "restartPolicy": "always",
             "settings": {
               "image": "bmsanalyticsedge.azurecr.io/edge_socket_server:0.0.1-amd64",
-              "createOptions": "{\"ExposedPorts\":{\"8091/tcp\":{}},\"HostConfig\":{\"PortBindings\":{\"8091/tcp\":[{\"HostPort\":\"8091\"}]}}}"
+              "createOptions": "{\"ExposedPorts\":{\"8092/tcp\":{}},\"HostConfig\":{\"PortBindings\":{\"8092/tcp\":[{\"HostPort\":\"8092\"}]}}}"
             }
           },
           "python_test_module": {
@@ -103,7 +103,8 @@
       "properties.desired": {
         "schemaVersion": "1.0",
         "routes": {
-          "OPCPublisherToedge_preprocessor": "FROM /messages/modules/OPCPublisher INTO BrokeredEndpoint(\"/modules/python_test_module/inputs/input1\")"
+          "OPCPublisherToedge_preprocessor": "FROM /messages/modules/OPCPublisher INTO BrokeredEndpoint(\"/modules/python_test_module/inputs/input1\")",
+          "python_test_moduleToedge_socket_server": "FROM /messages/modules/python_test_module INTO BrokeredEndpoint(\"/modules/edge_socket_server/inputs/input1\")"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
