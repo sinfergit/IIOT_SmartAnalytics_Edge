@@ -95,6 +95,26 @@
               "image": "bmsanalyticsedge.azurecr.io/edge_iiot_analyzer_web:0.0.1-amd64",
               "createOptions": "{\"ExposedPorts\":{\"8080/tcp\":{}},\"HostConfig\":{\"PortBindings\":{\"80/tcp\":[{\"HostPort\":\"80\"}]}}}"
             }
+          },
+          "grafana": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "grafana/grafana",
+              "createOptions": "{\"Hostname\":\"grafana\",\"HostConfig\":{\"PortBindings\":{\"3000/tcp\":[{\"HostPort\":\"3000\"}]},\"Binds\":[\"/home/sineth/iiotedge/grafana_data:/var/lib/grafana\"]},\"ExposedPorts\":{\"3000/tcp\":{}}}"
+            }
+          },
+          "influxdb": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "influxdb:latest",
+              "createOptions": "{\"Hostname\":\"influxdb\",\"Env\":[\"INFLUXDB_DB=bmsTelemetry\",\"INFLUXDB_USER=user\",\"INFLUXDB_USER_PASSWORD=password\",\"INFLUXDB_ADMIN_ENABLED=true\",\"INFLUXDB_ADMIN_USER=admin\",\"INFLUXDB_ADMIN_PASSWORD=password\"],\"HostConfig\":{\"PortBindings\":{\"8086/tcp\":[{\"HostPort\":\"8086\"}]},\"Binds\":[\"/home/sineth/iiotedge/influx_data:/var/lib/influxdb\"]},\"ExposedPorts\":{\"8086/tcp\":{}}}"
+            }
           }
         }
       }
