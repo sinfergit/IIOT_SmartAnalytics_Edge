@@ -236,6 +236,61 @@
                 }
               }
             }
+          },
+          "kapacitor": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "kapacitor",
+              "createOptions": {
+                "Hostname": "kapacitor",
+                "HostConfig": {
+                  "PortBindings": {
+                    "9092/tcp": [
+                      {
+                        "HostPort": "9092"
+                      }
+                    ]
+                  },
+                  "Binds": [
+                    "/home/sineth/iiotedge/kapacitor/data:/var/lib/kapacitor",
+                    "/home/sineth/iiotedge/kapacitor/config:/etc/kapacitor/"
+                  ]
+                },
+                "ExposedPorts": {
+                  "9092/tcp": {}
+                }
+              }
+            }
+          },
+          "chronograf": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "chronograf",
+              "createOptions": {
+                "Hostname": "chronograf",
+                "HostConfig": {
+                  "PortBindings": {
+                    "8888/tcp": [
+                      {
+                        "HostPort": "8888"
+                      }
+                    ]
+                  },
+                  "Binds": [
+                    "/home/sineth/iiotedge/chronograf_data:/var/lib/chronograf"
+                  ]
+                },
+                "ExposedPorts": {
+                  "8888/tcp": {}
+                }
+              }
+            }
           }
         }
       }
