@@ -57,6 +57,33 @@
           }
         },
         "modules": {
+          "grafana": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "grafana/grafana",
+              "createOptions": {
+                "Hostname": "grafana",
+                "HostConfig": {
+                  "PortBindings": {
+                    "3000/tcp": [
+                      {
+                        "HostPort": "3000"
+                      }
+                    ]
+                  },
+                  "Binds": [
+                    "/home/sineth/iiotedge/grafana_data:/var/lib/grafana"
+                  ]
+                },
+                "ExposedPorts": {
+                  "3000/tcp": {}
+                }
+              }
+            }
+          },
           "influxdb": {
             "version": "1.0",
             "type": "docker",
