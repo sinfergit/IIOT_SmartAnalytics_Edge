@@ -36,6 +36,16 @@
           }
         },
         "modules": {
+          "grafana": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "grafana/grafana",
+              "createOptions": "{\"Hostname\":\"grafana\",\"HostConfig\":{\"PortBindings\":{\"3000/tcp\":[{\"HostPort\":\"3000\"}]},\"Binds\":[\"/home/sineth/iiotedge/grafana_data:/var/lib/grafana\"]},\"ExposedPorts\":{\"3000/tcp\":{}}}"
+            }
+          },
           "influxdb": {
             "version": "1.0",
             "type": "docker",
@@ -52,7 +62,7 @@
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "kapacitor",
+              "image": "bmsanalyticsedge.azurecr.io/edge_influx_kapacitor:0.0.1-amd64",
               "createOptions": "{\"Hostname\":\"kapacitor\",\"Env\":[\"KAPACITOR_LOGGING_LEVEL=INFO\",\"KAPACITOR_REPORTING_ENABLED=false\",\"KAPACITOR_INFLUXDB_0_ENABLED=true\",\"KAPACITOR_INFLUXDB_0_DEFAULT=true\",\"KAPACITOR_INFLUXDB_0_URLS_0=http://influxdb:8086\"],\"HostConfig\":{\"PortBindings\":{\"9092/tcp\":[{\"HostPort\":\"9092\"}]},\"Binds\":[\"/home/sineth/iiotedge/kapacitor/data:/var/lib/kapacitor\",\"/home/sineth/iiotedge/kapacitor/config:/etc/kapacitor/\"]},\"ExposedPorts\":{\"9092/tcp\":{}}}"
             }
           },

@@ -117,7 +117,7 @@
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "kapacitor",
+              "image": "${MODULES.edge_influx_kapacitor}",
               "createOptions": {
                 "Hostname": "kapacitor",
                 "Env": [
