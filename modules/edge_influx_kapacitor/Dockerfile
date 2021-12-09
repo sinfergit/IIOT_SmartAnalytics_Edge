@@ -8,11 +8,13 @@ RUN apt-get -qq update && apt-get -qq install -y \
 
 # Install python dependencies
 RUN pip3 install \
+    tensorflow \
 	numpy \
 	pandas \
 	protobuf==3.18.0\
-	scipy
-
+	scipy && \
+	pip3 install keras --no-deps
+	
 # Install git
 RUN apt-get -qq install -y git
 
