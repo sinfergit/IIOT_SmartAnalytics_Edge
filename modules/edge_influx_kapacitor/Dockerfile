@@ -11,6 +11,7 @@ RUN pip3 install \
     tensorflow \
 	numpy \
 	pandas \
+	scikit_learn \
 	protobuf==3.18.0\
 	scipy && \
 	pip3 install keras --no-deps
