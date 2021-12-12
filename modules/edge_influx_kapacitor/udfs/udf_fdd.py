@@ -21,8 +21,11 @@ class FddPredictorHandler(Handler):
         self._size = 10
         self._points = []
         self._state = {}
-        self._sensorColumns=["Tag11", "Tag12"]
-        self._columnCount = 64
+        self._sensorColumns=["TWE_set","TEI","TWEI","TEO","TWEO","TCI","TWCI","TCO","TWCO","TSI","TSO","TBI","TBO","Cond Tons","Cooling Tons","Shared Cond Tons","Cond Energy Balance","Evap Tons"
+    ,"Shared Evap Tons","Building Tons","Evap Energy Balance","kW","COP","kW_Ton","FWC","FWE","TEA","TCA","TRE","PRE","TRC","PRC","TRC_sub","T_suc","Tsh_suc","TR_dis","Tsh_dis","P_lift"
+    ,"Amps","RLA%","Heat Balance%","Tolerance%","Unit Status","Active Fault","TO_sump","TO_feed","PO_feed","PO_net","TWCD","TWED","VSS","VSL","VH","VM","VC","VE","VW"
+    ,"TWI","TWO","THI","THO","FWW","FWH","FWB"]
+        self._columnCount = len(self._sensorColumns)
 
     def info(self):
         logger.info('info trigger')
@@ -94,11 +97,27 @@ class FddPredictorHandler(Handler):
         #logger.info(point)
         logger.info('*******point content******')
         logger.info(str(len(point.fieldsDouble)))
+        logger.info('********************** sensor fields with values ********************************')
+        logger.info(point.fieldsDouble)
         sensorsPoint = point.fieldsDouble
         if len(sensorsPoint) == self._columnCount:
-            pointerValues = [sensorsPoint.get(val) for val in sensorsPoint[::-1]]
-            logger.info(pointerValues)
+            pointerValues = []
+            #Mapping of the unordered fields into ordered
+            for col in self._sensorColumns:
+             pointerValues.append(
+                 sensorsPoint.get(col)
+             )
+
+            #Reversing the sensor data points 
+            # pointerValues.reverse()
+            # logger.info('********************reversed sensor values*******************')
+            # logger.info(pointerValues)
+            # pointerKeys = [val for val in sensorsPoint]
+            # pointerKeys.reverse()
+            # logger.info('********************reversed sensor names*******************')
+            # logger.info(pointerKeys) 
             self._points.append(pointerValues)
+
             logger.info('******* pointer values loaded into list******')
 
         if len(self._points) == self._size:
@@ -116,12 +135,12 @@ class FddPredictorHandler(Handler):
             #Convert list to numpy array 
             numpySensorValues = np.array(self._points)
             logger.info('************* sensor values convert into numpy ***********')
-            sensorDf = pd.DataFrame(data=numpySensorValues, columns=self._sensorColumns)
-            self.predictDataCondition(sensorDf)
+            #sensorDf = pd.DataFrame(data=numpySensorValues, columns=self._sensorColumns)
+            self.predictDataCondition(numpySensorValues)
             self._points=[]
         logger.info("************** ByeBye Point")
 
-    def predictDataCondition(self,sensorDf):
+    def predictDataCondition(self,numpySensorValues):
         fdd_model = tf.keras.models.load_model('/tmp/kapacitor_udf/model_new.h5',compile= False)
         lstm_scaler = load(open('/tmp/kapacitor_udf/std_sclaer.pkl', 'rb'))
         realDataArray=[[[ 2.88954095, -2.77214517, -2.45401974, -2.38537815,
@@ -295,9 +314,12 @@ class FddPredictorHandler(Handler):
          -2.29740046, -0.00350072, -0.92975277, -0.2968397 ,
           1.10139454]]]
         logger.info('models and sclaer loaded')
-        numpyArray = np.array(realDataArray)
-        logger.info('shape of numpy array is '+str(numpyArray.shape))
-        prediction = fdd_model.predict(numpyArray).argmax(-1)[-1,-1]
+        scaledValues = lstm_scaler.transform(numpySensorValues)
+        reshapedSensorValues = scaledValues.reshape(-1,self._size,self._columnCount)
+        logger.info(reshapedSensorValues)
+        #numpyArray = np.array(realDataArray)
+        logger.info('shape of numpy array is '+str(reshapedSensorValues.shape))
+        prediction = fdd_model.predict(reshapedSensorValues).argmax(-1)[-1,-1]
         logger.info('The model prediction is '+str(prediction))
     
     
