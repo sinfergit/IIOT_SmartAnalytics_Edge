@@ -1,0 +1,10 @@
+stream
+    |from()
+        .database('bms-data')
+        .retentionPolicy('autogen')
+        .measurement('udf_pre-processor')
+    @fddPredictorNew()
+    |influxDBOut()
+        .database('bms-data')
+        .retentionPolicy('autogen')
+        .measurement('test_udf_fdd-predictor')

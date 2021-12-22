@@ -1,0 +1,16 @@
+var data = batch
+    |query('SELECT "TWE_set","TEI","TWEI","TEO","TWEO","TCI","TWCI","TCO","TWCO","TSI","TSO","TBI","TBO","Cond Tons","Cooling Tons","Shared Cond Tons","Cond Energy Balance","Evap Tons"
+    ,"Shared Evap Tons","Building Tons","Evap Energy Balance","kW","COP","FWC","FWE","TEA","TCA","TRE","PRE","TRC","PRC","TRC_sub","T_suc","Tsh_suc","TR_dis","Tsh_dis","P_lift"
+    ,"Amps","RLA%","Heat Balance%","Tolerance%","Unit Status","Active Fault","TO_sump","TO_feed","PO_feed","PO_net","TWCD","TWED","VSS","VSL","VH","VM","VC","VE","VW"
+    ,"TWI","TWO","THI","THO","FWW","FWH","FWB" FROM "bms-data"."autogen"."Refined-OPC-UA"')
+        .period(100s)
+        .every(100s)
+
+data
+    @fddPreprocessor()
+        .size(10)
+    |InfluxDBOut()
+        .create()
+        .database('bms-data')
+        .retentionPolicy('autogen')
+        .measurement('udf_pre-processor')
