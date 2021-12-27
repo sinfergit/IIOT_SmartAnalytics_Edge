@@ -20,16 +20,17 @@ class FddPredictorHandler(Handler):
         self._size = 10
         self._points = []
         self._state = {}
-        self._sensorColumns=["TWE_set","TEI","TWEI","TEO","TWEO","TCI","TWCI","TCO","TWCO","TSI","TSO","TBI","TBO","Cond Tons","Cooling Tons","Shared Cond Tons","Cond Energy Balance","Evap Tons"
-    ,"Shared Evap Tons","Building Tons","Evap Energy Balance","kW","COP","FWC","FWE","TEA","TCA","TRE","PRE","TRC","PRC","TRC_sub","T_suc","Tsh_suc","TR_dis","Tsh_dis","P_lift"
-    ,"Amps","RLA%","Heat Balance%","Tolerance%","Unit Status","Active Fault","TO_sump","TO_feed","PO_feed","PO_net","TWCD","TWED","VSS","VSL","VH","VM","VC","VE","VW"
-    ,"TWI","TWO","THI","THO","FWW","FWH","FWB"]
+        self._sensorColumns=["TWE_set","TEI","TWEI","TEO","TWEO","TCI","TWCI","TCO","TWCO","TSI","TSO","TBI","TBO",
+     "kW","FWC","FWE","TEA","TCA","TRE","PRE","TRC","PRC","TRC_sub","T_suc","Tsh_suc","TR_dis","Tsh_dis","P_lift"
+    ,"Amps","RLA%","Unit Status","Active Fault","TO_sump","TO_feed","PO_feed","PO_net","TWCD","TWED","VSS","VSL","VH","VM","VC","VE","VW"
+    ,"TWI","TWO","THI","THO"]
+        self._chillerConditions=["cf","eo","fwc","fwe","nc","normal","rl","ro"]
         self._columnCount = len(self._sensorColumns)
 
     def info(self):
         logger.info('predictor_info trigger')
         response = udf_pb2.Response()
-        response.info.wants = udf_pb2.BATCH
+        response.info.wants = udf_pb2.STREAM
         response.info.provides = udf_pb2.STREAM
         response.info.options['size'].valueTypes.append(udf_pb2.INT)
         logger.info(tf.__version__)
@@ -93,7 +94,8 @@ class FddPredictorHandler(Handler):
         logger.info('*******predictor_point content******')
         logger.info(str(len(point.fieldsDouble)))
         logger.info('********************** predictor_sensor fields with values ********************************')
-        logger.info(point.fieldsDouble)
+        logger.info(point)
+        #logger.info(point.fieldsDouble)
         sensorsPoint = point.fieldsDouble
         if len(sensorsPoint) == self._columnCount:
             pointerValues = []
@@ -122,11 +124,12 @@ class FddPredictorHandler(Handler):
             numpySensorValues = np.array(self._points)
             logger.info('************* predictor_sensor values convert into numpy ***********')
             #sensorDf = pd.DataFrame(data=numpySensorValues, columns=self._sensorColumns)
-            self.predictDataCondition(numpySensorValues)
+            conditionId = self.predictDataCondition(numpySensorValues)
             response.point.name = point.name
             response.point.time = point.time
             response.point.group = point.group
-            response.point.fieldsInt['conditionId'] = self.predictDataCondition(numpySensorValues)
+            response.point.fieldsInt['conditionId'] = conditionId
+            response.point.fieldsString['conditionName'] = self._chillerConditions[conditionId]
             logger.info('**************** predictor_point response before writing**************')
             logger.info(response)
             self._agent.write_response(response)

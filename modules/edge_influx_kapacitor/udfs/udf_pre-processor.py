@@ -21,10 +21,10 @@ class FddPredictorHandler(Handler):
         self._points = []
         self._pointerList = []
         self._state = {}
-        self._sensorColumns=["TWE_set","TEI","TWEI","TEO","TWEO","TCI","TWCI","TCO","TWCO","TSI","TSO","TBI","TBO","Cond Tons","Cooling Tons","Shared Cond Tons","Cond Energy Balance","Evap Tons"
-    ,"Shared Evap Tons","Building Tons","Evap Energy Balance","kW","COP","FWC","FWE","TEA","TCA","TRE","PRE","TRC","PRC","TRC_sub","T_suc","Tsh_suc","TR_dis","Tsh_dis","P_lift"
-    ,"Amps","RLA%","Heat Balance%","Tolerance%","Unit Status","Active Fault","TO_sump","TO_feed","PO_feed","PO_net","TWCD","TWED","VSS","VSL","VH","VM","VC","VE","VW"
-    ,"TWI","TWO","THI","THO","FWW","FWH","FWB"]
+        self._sensorColumns=["TWE_set","TEI","TWEI","TEO","TWEO","TCI","TWCI","TCO","TWCO","TSI","TSO","TBI","TBO",
+     "kW","FWC","FWE","TEA","TCA","TRE","PRE","TRC","PRC","TRC_sub","T_suc","Tsh_suc","TR_dis","Tsh_dis","P_lift"
+    ,"Amps","RLA%","Unit Status","Active Fault","TO_sump","TO_feed","PO_feed","PO_net","TWCD","TWED","VSS","VSL","VH","VM","VC","VE","VW"
+    ,"TWI","TWO","THI","THO"]
         self._columnCount = len(self._sensorColumns)
 
     def info(self):
@@ -94,7 +94,8 @@ class FddPredictorHandler(Handler):
         logger.info('*******preprocessor_point content******')
         logger.info(str(len(point.fieldsDouble)))
         logger.info('********************** preprocessor_sensor fields with values ********************************')
-        logger.info(point.fieldsDouble)
+        logger.info(point)
+        # logger.info(point.fieldsDouble)
         sensorsPoint = point.fieldsDouble
         if len(sensorsPoint) == self._columnCount:
             self._pointerList.append(point)
